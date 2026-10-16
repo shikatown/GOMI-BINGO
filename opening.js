@@ -57,6 +57,8 @@
     run.ending = true;
     run.timers.forEach(clearTimeout);
     if (run.audio) run.audio.close().catch(() => {});
+    // Reveal the prepared name screen only when the opening starts fading out.
+    document.documentElement.removeAttribute('data-opening-pending');
     run.el.classList.add('sb-ending');
     setTimeout(() => {
       run.el.getAnimations({subtree:true}).forEach(a => a.cancel());
@@ -73,7 +75,14 @@
     if (current || starting) return;
     starting=true;
     // Logo sprites can animate immediately; text fonts load independently.
-    await gameLogoReady();
+    try {
+      await gameLogoReady();
+    } catch (error) {
+      starting=false;
+      document.documentElement.removeAttribute('data-opening-pending');
+      console.warn('オープニング画像を読み込めないため、名前入力へ進みます。',error);
+      return;
+    }
     starting=false;
     if(current) return;
     const el = document.createElement('section');
@@ -175,5 +184,10 @@
     later(finish,motion.matches ? 1600 : OPENING_END);
   };
   window.closeSeaOpening = finish;
-  window.startSeaOpening();
+  window.startSeaOpening().catch(error => {
+    starting=false;
+    document.documentElement.removeAttribute('data-opening-pending');
+    if(current) finish();
+    console.error('オープニングを開始できませんでした。',error);
+  });
 })();

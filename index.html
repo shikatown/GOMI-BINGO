@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-opening-pending>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b7285">
 <title>海ゴミBINGO！</title>
+<style>html[data-opening-pending] .app{visibility:hidden!important}</style>
 
 
 <link rel="stylesheet" href="opening.css?v=14">
@@ -14,7 +15,7 @@
 <script src="game-effects.js?v=22"></script>
 <script src="quiz-visuals.js?v=18"></script>
 <script src="player-profile.js?v=9"></script>
-<script src="opening.js?v=22" defer></script>
+<script src="opening.js?v=24" defer onerror="document.documentElement.removeAttribute('data-opening-pending')"></script>
 <link rel="stylesheet" href="ui.css?v=22">
 </head>
 <body>
@@ -742,7 +743,7 @@ function resetConfirm(){
 }
 function resetGame(){localStorage.removeItem(KEY);location.reload()}
 
-try { init(); } catch (error) { console.error("ゲームの初期化エラー:", error); const screen=document.getElementById("screen"); if(screen) screen.innerHTML = '<div class="card center"><p>ゲームの読み込みでエラーが発生しました。</p><button onclick="location.reload()">再読み込み</button></div>'; }
+try { init(); } catch (error) { document.documentElement.removeAttribute('data-opening-pending'); console.error("ゲームの初期化エラー:", error); const screen=document.getElementById("screen"); if(screen) screen.innerHTML = '<div class="card center"><p>ゲームの読み込みでエラーが発生しました。</p><button onclick="location.reload()">再読み込み</button></div>'; }
 </script>
 
 </body>
